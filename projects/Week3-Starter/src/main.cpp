@@ -230,12 +230,10 @@ int main()
 			//(GLenum)interleaved_ibo->GetElementType(), nullptr);
 		//VertexArrayObject::Unbind();
 
-		glfwSwapBuffers(window);
-
 		vao3->Bind();
 		glDrawElements(GL_TRIANGLES,
-			(GLenum)interleaved_ibo->GetElementCount(),
-			(GLenum)interleaved_ibo->GetElementType(), nullptr);
+			(GLenum)diamond_ibo->GetElementCount(),
+			(GLenum)diamond_ibo->GetElementType(), nullptr);
 		VertexArrayObject::Unbind();
 
 		glfwSwapBuffers(window);

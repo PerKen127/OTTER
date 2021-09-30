@@ -56,7 +56,7 @@ GLFWwindow* window;
 // The current size of our window in pixels
 glm::ivec2 windowSize = glm::ivec2(800, 800);
 // The title of our GLFW window
-std::string windowTitle = "INFR-1350U";
+std::string windowTitle = "100787173";
 
 void GlfwWindowResizedCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -136,6 +136,17 @@ int main()
 	VertexBuffer* interleaved_vbo = new VertexBuffer();
 	interleaved_vbo->LoadData(interleaved, 6 * 4);
 
+	static const float diamond[] = {
+		// X    Y     Z     R     G     B
+		0.5f, -0.25f, 0.5f, 0.2f, 0.0f, 0.3f,
+		0.75f, 0.25f, 0.5f, 1.f, 1.f, 1.f,
+		0.5f, 0.75f, 0.5f, 0.2f, 0.0f, 0.3f,
+		0.25f, 0.25f, 0.5f, 1.0f, 1.0f, 1.0f
+	};
+
+	VertexBuffer* diamond_vbo = new VertexBuffer();
+	diamond_vbo->LoadData(diamond, 6 * 4);
+
 	static const uint16_t indices[] = {
 		3, 0, 1,
 		3, 1, 2
@@ -144,7 +155,19 @@ int main()
 	IndexBuffer* interleaved_ibo = new IndexBuffer();
 	interleaved_ibo->LoadData(indices, 3 * 2);
 
+	IndexBuffer* diamond_ibo = new IndexBuffer();
+	diamond_ibo->LoadData(indices, 3 * 2);
+
 	size_t stride = sizeof(float) * 6;
+	VertexArrayObject* vao3 = new VertexArrayObject();
+	vao3->AddVertexBuffer(diamond_vbo,
+	{
+		BufferAttribute(0, 3, AttributeType::Float, stride, 0),
+		BufferAttribute(1, 3, AttributeType::Float, stride, sizeof(float) * 3),
+	});
+
+	vao3->SetIndexBuffer(diamond_ibo);
+
 	VertexArrayObject* vao2 = new VertexArrayObject();
 	vao2->AddVertexBuffer(interleaved_vbo, 
 	{
@@ -201,9 +224,17 @@ int main()
 		vao->Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		vao2->Bind();
-		glDrawElements(GL_TRIANGLES, 
-			(GLenum)interleaved_ibo->GetElementCount(), 
+		//vao2->Bind();
+		//glDrawElements(GL_TRIANGLES, 
+			//(GLenum)interleaved_ibo->GetElementCount(), 
+			//(GLenum)interleaved_ibo->GetElementType(), nullptr);
+		//VertexArrayObject::Unbind();
+
+		glfwSwapBuffers(window);
+
+		vao3->Bind();
+		glDrawElements(GL_TRIANGLES,
+			(GLenum)interleaved_ibo->GetElementCount(),
 			(GLenum)interleaved_ibo->GetElementType(), nullptr);
 		VertexArrayObject::Unbind();
 
